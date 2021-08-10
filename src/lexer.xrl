@@ -1,7 +1,7 @@
 Definitions.
 Rules.
 %% a lowercase character representing a simple proposition
-[a-z] : {token, {proposition, TokenLine, TokenChars}}.
+[a-zA-Z] : {token, {proposition, TokenLine, TokenChars}}.
 %% open/close parentheses
 \( : {token, {'(', TokenLine}}.
 \) : {token, {')', TokenLine}}.
