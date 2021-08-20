@@ -1,15 +1,15 @@
 Definitions.
 Rules.
 %% a lowercase character representing a simple proposition
-[a-zA-Z] : {token, {proposition, TokenLine, TokenChars}}.
+[a-zA-Z\_0-9]+ : {token, {proposition, TokenLine, TokenChars}}.
 %% open/close parentheses
 \( : {token, {'(', TokenLine}}.
 \) : {token, {')', TokenLine}}.
 %% logic operators
-\! : {token, {'not', TokenLine}}.
-\| : {token, {'or', TokenLine}}.
-\& : {token, {'and', TokenLine}}.
-\-> : {token, {'implies', TokenLine}}.
+\! : {token, {'negation', TokenLine}}.
+\| : {token, {'disjunction', TokenLine}}.
+\& : {token, {'conjunction', TokenLine}}.
+\-> : {token, {'conditional', TokenLine}}.
 %% white space
 [\s\n\r\t]+ : skip_token.
 %%

@@ -1,18 +1,18 @@
 Nonterminals predicate premise.
-Terminals proposition 'not' 'or' 'and' 'implies' '(' ')'.
+Terminals proposition 'negation' 'disjunction' 'conjunction' 'conditional' '(' ')'.
 Rootsymbol predicate.
 
-Left 100 'or' 'and' 'implies'.
-Unary 200 'not'. 
+Left 100 'disjunction' 'conjunction' 'conditional'.
+Unary 200 'negation'. 
 
-predicate -> premise 'implies' predicate : {'implies', '$1', '$3'}.
-predicate -> premise 'and' predicate : {'and', '$1', '$3'}.
-predicate -> premise 'or' predicate : {'or', '$1', '$3'}.
+predicate -> premise 'conditional' predicate : {'conditional', '$1', '$3'}.
+predicate -> premise 'conjunction' predicate : {'conjunction', '$1', '$3'}.
+predicate -> premise 'disjunction' predicate : {'disjunction', '$1', '$3'}.
 predicate -> premise : '$1'.
 
 premise -> '(' predicate ')' : '$2'.
-premise -> 'not' predicate : {'not', '$2'}.
-premise -> proposition : {'simple', unwrap('$1')}.
+premise -> 'negation' predicate : {'negation', '$2'}.
+premise -> proposition : {'proposition', unwrap('$1')}.
 
 Erlang code.
 

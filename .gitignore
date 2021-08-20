@@ -26,3 +26,5 @@ analytic_tableaux-*.tar
 /tmp/
 
 src/*.erl
+
+**/.DS_Store
