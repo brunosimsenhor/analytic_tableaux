@@ -1,3 +1,3 @@
 defmodule AnalyticTableaux.Formula.Proposition do
-  defstruct kind: :proposition, value: nil
+  defstruct value: nil
 end

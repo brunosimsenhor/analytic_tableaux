@@ -1,3 +1,3 @@
 defmodule AnalyticTableaux.Formula.Negation do
-  defstruct kind: :negation, proposition: nil
+  defstruct proposition: nil
 end

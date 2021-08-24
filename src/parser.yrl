@@ -3,7 +3,7 @@ Terminals proposition 'negation' 'disjunction' 'conjunction' 'conditional' '(' '
 Rootsymbol predicate.
 
 Left 100 'disjunction' 'conjunction' 'conditional'.
-Unary 200 'negation'. 
+Unary 200 'negation'.
 
 predicate -> premise 'conditional' predicate : {'conditional', '$1', '$3'}.
 predicate -> premise 'conjunction' predicate : {'conjunction', '$1', '$3'}.
