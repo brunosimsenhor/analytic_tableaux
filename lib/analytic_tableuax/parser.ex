@@ -1,75 +1,70 @@
 defmodule AnalyticTableaux.Parser do
-  def parse(str) do
-    [antecedents, consequents] = str
-      |> String.split("|-")
+  @moduledoc """
+  Provides parsing for analytic tableaux.
+  """
 
-    build_struct({ :problem, antecedents, consequents })
+  @doc """
+  Parse a problem into a complex struct of sequents.
+  """
+  @spec parse_problem(String.t()) :: AnalyticTableaux.Problem.t()
+  def parse_problem(str) do
+    [antecedents, consequents] = String.split(str, "|-")
+
+    build_struct({:problem, antecedents, consequents})
   end
 
-  def sub_parse(str) do
-    {:ok, sequents} = str
+  @doc """
+  Parse a string into a structured sequent.
+  """
+  @spec parse_sequent(String.t()) :: AnalyticTableaux.Sequent.t()
+  def parse_sequent(str) do
+    {:ok, sequents} =
+      str
       |> tokenize()
       |> :parser.parse()
 
     sequents
-      |> build_struct()
+    |> build_struct()
   end
 
   defp tokenize(str) do
-    {:ok, tokens, _} = str
+    {:ok, tokens, _} =
+      str
       |> to_charlist()
       |> :lexer.string()
 
     tokens
   end
 
-  defp build_struct({ :problem, antecedents, consequents }) do
+  defp build_struct({:problem, antecedents, consequents}) do
     %AnalyticTableaux.Problem{
-      antecedents: build_struct({ :antecedents, antecedents }),
-      consequents: build_struct({ :consequents, consequents })
+      antecedents: build_struct({:antecedents, antecedents}),
+      consequents: build_struct({:consequents, consequents})
     }
   end
 
-  defp build_struct({ :antecedents, antecedents }) do
-    values = antecedents
-      |> String.split(",")
-      |> Enum.map(&sub_parse/1)
-
-    %AnalyticTableaux.Formula.Antecedents{ values: values }
-    # { :antecedents, values: values }
+  # Structuring the problem antecedents and consequents
+  defp build_struct({type, sequents}) when type in [:antecedents, :consequents] do
+    sequents
+    |> String.split(",")
+    |> Enum.map(&parse_sequent/1)
+    |> AnalyticTableaux.SequentSet.new(type)
   end
 
-  defp build_struct({ :consequents, consequents }) do
-    values = consequents
-      |> String.split(",")
-      |> Enum.map(&sub_parse/1)
-
-    %AnalyticTableaux.Formula.Consequents{ values: values }
-    # { :consequents, values: values }
+  # Structuring propositions, an unary case.
+  # Propositions don't need to be recursively structured.
+  defp build_struct({:proposition, proposition}) do
+    %AnalyticTableaux.Sequent{type: :proposition, values: {proposition}}
   end
 
-  defp build_struct({ :proposition, value }) do
-    %AnalyticTableaux.Formula.Proposition{ value: value }
-    # { :proposition, value: value }
+  # Structuring negations, an unary case.
+  defp build_struct({:negation, proposition}) do
+    %AnalyticTableaux.Sequent{type: :negation, values: {build_struct(proposition)}}
   end
 
-  defp build_struct({ :negation, proposition }) do
-    %AnalyticTableaux.Formula.Negation{ proposition: build_struct(proposition) }
-    # { :negation, proposition: build_struct(proposition) }
-  end
-
-  defp build_struct({ :conditional, left, right }) do
-    %AnalyticTableaux.Formula.Conditional{ left: build_struct(left), right: build_struct(right) }
-    # { :conditional, left: build_struct(left), right: build_struct(right) }
-  end
-
-  defp build_struct({ :conjunction, left, right }) do
-    %AnalyticTableaux.Formula.Conjunction{ left: build_struct(left), right: build_struct(right) }
-    # { :conjunction, left: build_struct(left), right: build_struct(right) }
-  end
-
-  defp build_struct({ :disjunction, left, right }) do
-    %AnalyticTableaux.Formula.Disjunction{ left: build_struct(left), right: build_struct(right) }
-    # { :disjunction, left: build_struct(left), right: build_struct(right) }
+  # Structuring binary cases: conditionals, conjunctions and disjunctions.
+  defp build_struct({type, left, right})
+       when type in [:conditional, :conjunction, :disjunction] do
+    %AnalyticTableaux.Sequent{type: type, values: {build_struct(left), build_struct(right)}}
   end
 end

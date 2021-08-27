@@ -1,5 +1,4 @@
 defmodule TestHelpers.SequentExamples do
-
   def valid() do
     "./valid.problems"
     |> Path.expand(__DIR__)
@@ -14,10 +13,9 @@ defmodule TestHelpers.SequentExamples do
 
   defp read_problem_file(path) do
     path
-    |> File.read!
+    |> File.read!()
     |> String.split("\n")
   end
-
 end
 
 ExUnit.start()

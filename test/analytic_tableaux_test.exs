@@ -18,5 +18,4 @@ defmodule AnalyticTableauxTest do
       assert Prover.prove(context.sequent).status == :not_valid
     end
   end)
-
 end
