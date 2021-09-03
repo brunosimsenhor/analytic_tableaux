@@ -2,4 +2,4 @@ p|-(p&q)
 p|-(p&(q&s))
 p|-((p&q)&s)
 p, p->r |- q
-b & k, n -> ~k, k | ~k |- b -> n
+b & k, n -> !k, k | !k |- b -> n

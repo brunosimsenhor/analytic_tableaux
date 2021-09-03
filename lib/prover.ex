@@ -4,7 +4,7 @@ defmodule Prover do
   def prove(string) do
     string
     |> AnalyticTableaux.Parser.parse_problem
-    |> AnalyticTableaux.Prover.prove!
+    |> AnalyticTableaux.Prover.valid?
   end
 
   def get_status(%__MODULE__{status: status}) do

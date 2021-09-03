@@ -156,10 +156,15 @@ defmodule AnalyticTableaux.SignedFormula do
         } = root,
         state
       ) do
+    {left_branch, _, _} = build_from_sequent(true, left, root) |> expand!(state)
+    {right_branch, _, _} = build_from_sequent(true, right, root) |> expand!(state)
+
     branches = [
-      build_from_sequent(true, left, root),
-      build_from_sequent(true, right, root),
+      left_branch,
+      right_branch,
     ]
+
+    IO.puts(inspect(root))
 
     {treat_expansion!(root, branches, state), branches, branches}
   end
@@ -172,9 +177,12 @@ defmodule AnalyticTableaux.SignedFormula do
         } = root,
         state
       ) do
+    {left_branch, _, _} = build_from_sequent(false, left, root) |> expand!(state)
+    {right_branch, _, _} = build_from_sequent(false, right, root) |> expand!(state)
+
     branches = [
-      build_from_sequent(false, left, root),
-      build_from_sequent(false, right, root),
+      left_branch,
+      right_branch,
     ]
 
     {treat_expansion!(root, branches, state), branches, branches}
@@ -188,9 +196,12 @@ defmodule AnalyticTableaux.SignedFormula do
         } = root,
         state
       ) do
+    {left_branch, _, _} = build_from_sequent(true, left, root) |> expand!(state)
+    {right_branch, _, _} = build_from_sequent(false, right, root) |> expand!(state)
+
     branches = [
-      build_from_sequent(true, left, root),
-      build_from_sequent(false, right, root),
+      left_branch,
+      right_branch,
     ]
 
     {treat_expansion!(root, branches, state), branches, branches}
@@ -204,8 +215,10 @@ defmodule AnalyticTableaux.SignedFormula do
         } = root,
         state
       ) do
+    {only_branch, _, _} = build_from_sequent(!sign, proposition, root) |> expand!(state)
+
     branches = [
-      build_from_sequent(!sign, proposition, root),
+      only_branch,
     ]
 
     {treat_expansion!(root, branches, state), branches, branches}
@@ -274,35 +287,11 @@ defmodule AnalyticTableaux.SignedFormula do
     {root, branches, []}
   end
 
-  # Branch expansions
-  # defp branch!(%__MODULE__{} = expansion, branches, state) do
-  #   branches =
-  #     branches
-  #     |> Enum.map(&check_contradictions!(&1, state))
-  #     |> Enum.map(fn x ->
-  #       {branch, more_branches} = expand!(x, state)
-
-  #       case more_branches do
-  #         [_ | _] -> %{branch | branches: more_branches}
-  #         [] -> branch
-  #       end
-  #     end)
-
-  #   expansion = %{expansion | branches: branches}
-
-  #   IO.puts("expansion: " <> stringify(expansion))
-
-  #   expansion
-  # end
-
   # Changing expansions statuses
-  # Root propositions
+  # Closing root propositions
   defp change_expansion_status!(
-         %__MODULE__{
-           root: true,
-           sequent: %AnalyticTableaux.Sequent{type: :proposition}
-         } = expansion,
-         _,
+         %__MODULE__{root: true} = expansion,
+         :linear,
          _
        ) do
     close!(expansion)
@@ -321,16 +310,19 @@ defmodule AnalyticTableaux.SignedFormula do
 
   # Contradiction proposition
   defp change_expansion_status!(
-         %__MODULE__{
-           contradiction: true,
-           sequent: %AnalyticTableaux.Sequent{type: :proposition}
-         } = expansion,
+         %__MODULE__{contradiction: true} = expansion,
          :linear,
-         []
+         _
        ), do: close!(expansion)
 
+  # Contradiction proposition
+  defp change_expansion_status!(
+         %__MODULE__{contradiction: true} = expansion,
+         :branching,
+         [%{contradiction: left}, %{contradiction: right}]
+       ) when true in [left, right], do: close!(expansion)
+
   # Linear
-  #
   defp change_expansion_status!(
          %__MODULE__{
            root: false,
@@ -354,8 +346,8 @@ defmodule AnalyticTableaux.SignedFormula do
   defp change_expansion_status!(
          %__MODULE__{contradiction: false} = expansion,
          :branching,
-         [%{status: l_status}, %{status: r_status}]
-       ) when :saturated in [l_status, r_status], do: saturate!(expansion)
+         [%{status: left}, %{status: right}]
+       ) when :saturated in [left, right], do: saturate!(expansion)
 
   # When both inside branches are closed, we close the current branch.
   defp change_expansion_status!(
@@ -365,12 +357,14 @@ defmodule AnalyticTableaux.SignedFormula do
        ), do: close!(expansion)
 
   # Checks for contradictions in a given expansion against the current state.
-  defp check_contradictions!(%__MODULE__{} = expansion, state) do
+  defp check_contradictions!(%__MODULE__{sequent: %AnalyticTableaux.Sequent{type: :proposition}} = expansion, state) do
     contradiction!(
       expansion,
       Enum.any?(state, &contradicting_expansions?(&1, expansion))
     )
   end
+
+  defp check_contradictions!(%__MODULE__{} = expansion, _), do: expansion
 
   # This matches only when the sequents are equals (OMG).
   defp contradicting_expansions?(
