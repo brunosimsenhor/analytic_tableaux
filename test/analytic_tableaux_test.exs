@@ -6,7 +6,7 @@ defmodule AnalyticTableauxTest do
     @tag sequent: sequent
     @tag :pending
     test "The sequent #{sequent} is valid", context do
-      assert Prover.prove(context.sequent).status == :valid
+      assert %{status: :valid} = Prover.prove(context.sequent)
     end
   end)
 
@@ -15,7 +15,7 @@ defmodule AnalyticTableauxTest do
     @tag sequent: sequent
     @tag :pending
     test "The sequent #{sequent} is NOT valid", context do
-      assert Prover.prove(context.sequent).status == :not_valid
+      assert %{status: :not_valid} = Prover.prove(context.sequent)
     end
   end)
 end
