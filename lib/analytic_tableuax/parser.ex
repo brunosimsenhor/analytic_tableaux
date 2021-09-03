@@ -6,16 +6,16 @@ defmodule AnalyticTableaux.Parser do
   @doc """
   Build a solvable problem into a complex struct of sequents.
   """
-  @spec solvable_problem() :: AnalyticTableaux.Problem.t()
-  def solvable_problem() do
+  @spec provable_problem() :: AnalyticTableaux.Problem.t()
+  def provable_problem() do
     parse_problem("p, (p | q) -> r |- r")
   end
 
   @doc """
   Build a solvable problem into a complex struct of sequents.
   """
-  @spec unsolvable_problem() :: AnalyticTableaux.Problem.t()
-  def unsolvable_problem() do
+  @spec unprovable_problem() :: AnalyticTableaux.Problem.t()
+  def unprovable_problem() do
     parse_problem("p, (p & q) -> r |- r")
   end
 

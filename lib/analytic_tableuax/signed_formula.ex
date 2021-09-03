@@ -1,4 +1,4 @@
-defmodule AnalyticTableaux.Expansion do
+defmodule AnalyticTableaux.SignedFormula do
   @moduledoc """
   Provides operations for expansions on analytic tableaux.
   """
