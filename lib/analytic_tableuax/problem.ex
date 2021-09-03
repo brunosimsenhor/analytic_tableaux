@@ -5,7 +5,7 @@ defmodule AnalyticTableaux.Problem do
 
   @type t :: %__MODULE__{
           antecedents: [AnalyticTableaux.Sequent.t()],
-          consequents: [AnalyticTableaux.Sequent.t()],
+          consequents: [AnalyticTableaux.Sequent.t()]
         }
 
   defstruct antecedents: nil, consequents: nil
