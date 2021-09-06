@@ -164,8 +164,6 @@ defmodule AnalyticTableaux.SignedFormula do
       right_branch,
     ]
 
-    IO.puts(inspect(root))
-
     {treat_expansion!(root, branches, state), branches, branches}
   end
 
@@ -331,15 +329,6 @@ defmodule AnalyticTableaux.SignedFormula do
          :linear,
          _
        ), do: close!(expansion)
-
-  # defp change_expansion_status!(
-  #        %__MODULE__{
-  #          root: false,
-  #          contradiction: true,
-  #        } = expansion,
-  #        :linear,
-  #        _
-  #      ), do: close!(expansion)
 
   # Branching
   # When any of the inside branches are saturared.
