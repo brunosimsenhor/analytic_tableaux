@@ -359,9 +359,7 @@ defmodule AnalyticTableaux.SignedFormula do
   defp contradicting_expansions?(
          %__MODULE__{sign: l_sign, sequent: sequent},
          %__MODULE__{sign: r_sign, sequent: sequent}
-       ) do
-    l_sign != r_sign
-  end
+       ) when l_sign != r_sign, do: true
 
   defp contradicting_expansions?(_, _), do: false
 

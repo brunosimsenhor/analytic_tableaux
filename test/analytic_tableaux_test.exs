@@ -26,8 +26,4 @@ defmodule AnalyticTableauxTest do
   test "unprovable problem" do
     assert %{status: :not_valid} = Prover.prove("p, (p & q) -> r |- r")
   end
-
-  test "PHP1 problem" do
-    assert %{status: :valid} = Prover.prove(ProblemGenerator.generate(:php, 1))
-  end
 end
